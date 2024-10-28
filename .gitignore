@@ -1,0 +1,6 @@
+__pycache__/
+venv/
+.env
+*.pyc
+ca.pem
+isrgrootx1.pem
