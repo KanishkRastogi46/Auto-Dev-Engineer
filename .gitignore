@@ -4,3 +4,5 @@ venv/
 *.pyc
 ca.pem
 isrgrootx1.pem
+.next/
+node_modules/
