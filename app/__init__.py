@@ -18,9 +18,9 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    # login_manager.init_app(app)
-
     from app.routes.user import user
+    from app.routes.chat import chat
     app.register_blueprint(user , url_prefix="/users")
+    app.register_blueprint(chat , url_prefix="/chat")
 
     return app

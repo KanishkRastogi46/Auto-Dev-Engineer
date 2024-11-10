@@ -1,5 +1,4 @@
 from flask import Blueprint , jsonify , request , render_template , make_response
-from flask_cors import cross_origin
 from app.models.user import User
 from app import db
 import uuid
@@ -10,7 +9,6 @@ import jwt
 user = Blueprint('user', __name__)
 
 @user.route("/")
-@cross_origin()
 def root():
     users = User.query.all()
     data = []
@@ -22,7 +20,6 @@ def root():
 
 # register route
 @user.route("/register", methods=['GET','POST'])
-@cross_origin()
 def register():
     if request.method == 'POST':
         fullname = request.json.get("fullname")
@@ -55,7 +52,6 @@ def register():
 
 # login route
 @user.route("/login", methods=["GET", "POST"])
-@cross_origin()
 def login():
     if request.method == "POST":
         print(request.json)
