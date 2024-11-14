@@ -4,22 +4,29 @@ from app import db
 import uuid
 from bcrypt import hashpw , gensalt , checkpw
 import jwt
+from flask_cors import cross_origin , CORS
 
 
 user = Blueprint('user', __name__)
 
+CORS(user , supports_credentials=True, origins=["http://localhost:3000"])
+
+
 @user.route("/")
+@cross_origin()
 def root():
     users = User.query.all()
     data = []
     for user in users:
         data.append(user.to_dict())
     data.append({"access_token": request.cookies.get("access_token")})
-    return jsonify(data)
+    response = make_response(jsonify(data))
+    return response
 
 
 # register route
 @user.route("/register", methods=['GET','POST'])
+@cross_origin()
 def register():
     if request.method == 'POST':
         fullname = request.json.get("fullname")
@@ -52,6 +59,7 @@ def register():
 
 # login route
 @user.route("/login", methods=["GET", "POST"])
+@cross_origin()
 def login():
     if request.method == "POST":
         print(request.json)
@@ -66,8 +74,8 @@ def login():
             else:
                 encoded = jwt.encode(payload={"id": find_user.id, "email": find_user.email}, key="bsdkmadarchod")
                 res = make_response(jsonify({"message": "Login successfull", "success": True, "access_token": encoded}))
-                res.headers['Access-Control-Allow-Credentials'] = True
-                res.set_cookie("access_token", value=encoded, httponly=True, domain="http://localhost:3000")
+                # res.headers['Access-Control-Allow-Credentials'] = True
+                res.set_cookie("access_token", value=encoded, httponly=True)
                 return res
         else:
             return jsonify({"message": "User doesn't exists", "success": False})        
