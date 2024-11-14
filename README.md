@@ -20,8 +20,8 @@ pip install -r requirements.txt
 
 ## Create a .env file at the root of your project folder for storing database credentials and api key for gemini-api
 ```
-process.env.SQLALCHEMY_DATABASE_URI = "mysql+mysqldb://{username}:{password}@{host}:{port}/{db_name}?ssl_mode=VERIFY_IDENTITY&ssl_ca={path/to/.pem/file}"
-process.env.GOOGLE_API_KEY = "{your api key generated on google ai studio}"
+SQLALCHEMY_DATABASE_URI = "mysql+mysqldb://{username}:{password}@{host}:{port}/{db_name}?ssl_mode=VERIFY_IDENTITY&ssl_ca={path/to/.pem/file}"
+GOOGLE_API_KEY = "{your api key generated on google ai studio}"
 ```
 
 ## Create an Api key on google ai studio - [Google ai studio](https://aistudio.google.com/apikey)
