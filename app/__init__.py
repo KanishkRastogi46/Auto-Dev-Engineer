@@ -20,8 +20,6 @@ def create_app():
         db.create_all()
 
     from app.routes.user import user
-    from app.routes.chat import chat
     app.register_blueprint(user , url_prefix="/users")
-    app.register_blueprint(chat , url_prefix="/chat")
 
     return app

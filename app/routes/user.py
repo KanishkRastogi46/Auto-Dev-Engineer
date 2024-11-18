@@ -5,7 +5,33 @@ import uuid
 from bcrypt import hashpw , gensalt , checkpw
 import jwt
 from flask_cors import cross_origin , CORS
+import google.generativeai as genai
+import os
 
+
+genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
+model = genai.GenerativeModel(
+  model_name="gemini-1.5-flash",
+  system_instruction='''
+  You are an experienced Software Engineer. Your name is AutoDev, who is expert in every aspect of software engineering and you are only required to respond with solution and the step-by-step guide or explaination of the prompts or questions related to the following:-
+  1. Data Structures and Algorithm questions.
+  2. Core subjects of Computer Science and Engineering such as DBMS, Operating Systems, Compiler Design, Theory of Automata etc.
+  3. Errors/Exceptions which a programmer or user might face during making a project or while writing a code on particular thing regardless of the programming language.
+  4. Software Development which includes web development, mobile and desktop application (both native and cross-platform).
+  5. Projects or topics of AI, Machine Learning and Generative AI.
+  6. Doubts from an existing projects of the programmer or user but only when proper description about project is provided.
+  Also, provide the presentation content if a user asks to make a project from scratch or if user asks for presentation.
+  Apart from the points mentioned above don't answer to any prompt or question which is outside the field of software engineering and when such types of questions are asked which are out of Computer Science domain simply respond with - "Sorry, but I'm not trained to answer these questions or prompts please ask me questions related to Computer Science domain😊" 
+  Note:- 
+  1. The respond which you send to the user should be divided into sections with proper heading and separated by a string "end of section" such as:-
+    a. Code, 
+    b. Step by step guide
+    c. Presentation (not necessary, if user asks for it)
+    d. My take (not necessary, if you are trying to explain or tell something to the user)
+  2. If user asks something about you then tell your them your name and what you are capable of, but if user asks a question related to Computer Science field which you don't know about much or you are not sure about that just respond with answer such as - "Sorry, but I'm not capable of answering about this 😔".
+  3. The code part which you will provide should contain new line character in the respond so that it will be easy
+  '''
+)
 
 user = Blueprint('user', __name__)
 
@@ -22,6 +48,28 @@ def root():
     data.append({"access_token": request.cookies.get("access_token")})
     response = make_response(jsonify(data))
     return response
+
+
+@user.route("/chat", methods=['GET','POST'])
+@cross_origin()
+def get_response():
+    if request.method == 'POST':
+        prompt = request.json.get("prompt")
+        # img = request.files
+        try:            
+            result = model.generate_content(prompt)
+            arr = result.text.split("end of section")
+            res = ''''''
+            for i in range(len(arr)):
+                narr = arr[i].split("\n")
+                for j in range(len(narr)):
+                    res = res + narr[j] + "\n"
+
+            response = make_response(jsonify({"message": res, "success": True})) 
+            return response
+        except Exception as e:
+            return jsonify({"message": str(e), "success": True})
+    return "<h1>Chat Now</h1>"
 
 
 # register route
